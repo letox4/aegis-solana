@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Archivo, Instrument_Sans, Fragment_Mono } from "next/font/google";
 import "./globals.css";
 import { SolanaWalletProvider } from "@/components/WalletProvider";
 
@@ -9,15 +9,15 @@ const archivo = Archivo({
   variable: "--font-display",
 });
 
-const ibmPlexSans = IBM_Plex_Sans({
+const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
+const fragmentMono = Fragment_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400"],
   variable: "--font-mono",
 });
 
@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} dark`}
+      className={`${archivo.variable} ${instrumentSans.variable} ${fragmentMono.variable} dark`}
     >
       <body className="font-sans antialiased">
         <SolanaWalletProvider>{children}</SolanaWalletProvider>

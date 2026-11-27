@@ -138,7 +138,7 @@ export default function HomePage() {
           <MachinedPanel variant="titanium" className="mb-6 px-6 py-5 sm:px-7">
             <div className="flex flex-col justify-between gap-6 xl:flex-row xl:items-center">
               <div className="max-w-2xl">
-                <div className="mb-2.5 inline-flex items-center gap-2 rounded-md border border-teal-400/20 bg-teal-400/[0.06] px-2.5 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-teal-300">
+                <div className="mb-2.5 inline-flex items-center gap-2 rounded-md border border-teal-400/20 bg-teal-400/[0.06] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.11em] text-teal-300">
                   <span className="h-1.5 w-1.5 rotate-45 bg-teal-300" />
                   Offensive Security · Solana Devnet Protocol
                 </div>
@@ -151,9 +151,9 @@ export default function HomePage() {
                 <p className="mt-2.5 text-sm leading-relaxed text-slate-400">
                   Escrow SOL inside hardened Anchor PDAs, timestamp confidential vulnerability PoCs
                   with SHA-256 commit-reveal, unlock automated Sealevel audits via{" "}
-                  <span className="font-mono text-slate-200">HTTP 402 (x402 V2)</span>, and route
+                  <span className="font-medium text-slate-200">HTTP 402 (x402 V2)</span>, and route
                   cross-chain bounty liquidity with{" "}
-                  <span className="font-mono text-slate-200">LI.FI</span>.
+                  <span className="font-medium text-slate-200">LI.FI</span>.
                 </p>
               </div>
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/assets/aegis-banner.jpg" alt="AEGIS v3.0 — Zero-Trust Security Protocol on Solana" width="100%" />
+<img src="docs/assets/aegis-banner.png" alt="AEGIS v3.0 — Zero-Trust Security Protocol on Solana" width="100%" />
 
 <br />
 

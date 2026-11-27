@@ -2,7 +2,6 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
 import { ArrowUpRight, Search, Zap, Shield, Globe, Award } from "lucide-react";
 
 const WalletMultiButton = dynamic(
@@ -95,7 +94,7 @@ export function Header({
   const shortPid = `${programId.slice(0, 6)}…${programId.slice(-4)}`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-400/10 bg-[#05070b]/95">
+    <header className="sticky top-0 z-40 border-b border-slate-800/90 bg-[#05070b]">
       <div className="mx-auto flex max-w-[1460px] flex-wrap items-center justify-between gap-3 px-5 py-2.5 sm:px-8">
         {/* Left: Brand Identity */}
         <div className="flex items-center gap-6">
@@ -121,22 +120,15 @@ export function Header({
                   type="button"
                   onClick={() => onSelectTab(item.id)}
                   className={`relative flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12.5px] font-medium transition-colors ${
-                    active ? "text-white" : "text-slate-400 hover:text-slate-200"
+                    active
+                      ? "aegis-tab-pill text-white"
+                      : "border border-transparent text-slate-400 hover:text-slate-200"
                   }`}
                 >
-                  {active && (
-                    <motion.span
-                      layoutId="aegis-header-nav-pill"
-                      transition={{ type: "spring", stiffness: 540, damping: 40, mass: 0.7 }}
-                      className="aegis-tab-pill"
-                    />
-                  )}
                   <Icon
-                    className={`relative z-10 h-3.5 w-3.5 ${
-                      active ? "text-teal-300" : "text-slate-500"
-                    }`}
+                    className={`h-3.5 w-3.5 ${active ? "text-teal-300" : "text-slate-500"}`}
                   />
-                  <span className="relative z-10">{item.label}</span>
+                  <span>{item.label}</span>
                 </button>
               );
             })}

@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { AnimatePresence, motion } from "framer-motion";
 import { Header, AppTabId } from "@/components/Header";
 import { CommandPalette, QuickCommandAction } from "@/components/CommandPalette";
 import { ProtocolStatusBar } from "@/components/ProtocolStatusBar";
@@ -178,43 +177,35 @@ export default function HomePage() {
             </div>
           </MachinedPanel>
 
-          {/* Animated Workspace View */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.14, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {activeTab === "scanner" && (
-                <X402ScannerTab
-                  onRefreshState={refreshOnChainState}
-                  externalCommand={scannerCmd}
-                  onEscalateFinding={(draft) => {
-                    setEscalatedFinding(draft);
-                    setActiveTab("vaults");
-                  }}
-                />
-              )}
-              {activeTab === "vaults" && (
-                <BountyVaultsTab
-                  bounties={state.bounties}
-                  findings={state.findings}
-                  onRefresh={refreshOnChainState}
-                  escalatedFinding={escalatedFinding}
-                  onClearEscalation={() => setEscalatedFinding(null)}
-                />
-              )}
-              {activeTab === "lifi" && <LifiBridgeTab bounties={state.bounties} />}
-              {activeTab === "profiles" && (
-                <WhitehatProfilesTab
-                  whitehats={state.whitehats}
-                  attestations={state.attestations}
-                />
-              )}
-            </motion.div>
-          </AnimatePresence>
+          {/* Instant 240Hz Workspace View (Zero AnimatePresence unmount lag) */}
+          <div key={activeTab} className="aegis-tab-enter">
+            {activeTab === "scanner" && (
+              <X402ScannerTab
+                onRefreshState={refreshOnChainState}
+                externalCommand={scannerCmd}
+                onEscalateFinding={(draft) => {
+                  setEscalatedFinding(draft);
+                  setActiveTab("vaults");
+                }}
+              />
+            )}
+            {activeTab === "vaults" && (
+              <BountyVaultsTab
+                bounties={state.bounties}
+                findings={state.findings}
+                onRefresh={refreshOnChainState}
+                escalatedFinding={escalatedFinding}
+                onClearEscalation={() => setEscalatedFinding(null)}
+              />
+            )}
+            {activeTab === "lifi" && <LifiBridgeTab bounties={state.bounties} />}
+            {activeTab === "profiles" && (
+              <WhitehatProfilesTab
+                whitehats={state.whitehats}
+                attestations={state.attestations}
+              />
+            )}
+          </div>
         </main>
 
         <ProtocolStatusBar

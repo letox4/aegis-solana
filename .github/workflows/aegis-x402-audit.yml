@@ -1,0 +1,51 @@
+name: AEGIS x402 Solana Security Gate
+
+on:
+  pull_request:
+    paths:
+      - "programs/**/*.rs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  aegis-x402-audit:
+    name: Pay-Per-Scan Solana Audit (x402 V2 + SARIF)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Solana client dependencies
+        working-directory: app
+        run: npm ci --omit=dev
+
+      - name: Run Autonomous x402 V2 Solana Security Scan
+        env:
+          AEGIS_SCAN_ENDPOINT: ${{ vars.AEGIS_SCAN_ENDPOINT || 'https://aegis-solana.vercel.app/api/x402/scan' }}
+          SOLANA_KEYPAIR_JSON: ${{ secrets.SOLANA_DEVNET_KEYPAIR_JSON }}
+        run: |
+          if [ -n "$SOLANA_KEYPAIR_JSON" ]; then
+            echo "$SOLANA_KEYPAIR_JSON" > /tmp/ci-payer.json
+            node scripts/x402-agent-demo.mjs \
+              "$AEGIS_SCAN_ENDPOINT" \
+              --target programs/aegis402/src/lib.rs \
+              --keypair /tmp/ci-payer.json \
+              --sarif aegis-report.sarif \
+              --fail-on-critical
+          else
+            echo "SOLANA_DEVNET_KEYPAIR_JSON secret not configured; skipping paid x402 gate."
+          fi
+
+      - name: Upload AEGIS SARIF 2.1.0 to GitHub Code Scanning
+        if: always() && hashFiles('aegis-report.sarif') != ''
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: aegis-report.sarif

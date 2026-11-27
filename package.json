@@ -1,0 +1,24 @@
+{
+  "name": "aegis402-workspace",
+  "version": "1.0.0",
+  "description": "Aegis402 Solana Rust/Anchor Bug Bounty Vault + x402 Security Scanner + LI.FI Cross-Chain Router",
+  "private": true,
+  "scripts": {
+    "test:anchor": "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts",
+    "dev:app": "npm --prefix app run dev",
+    "build:app": "npm --prefix app run build",
+    "agent:demo": "node scripts/x402-agent-demo.mjs"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/web3.js": "^1.98.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "chai": "^4.3.10",
+    "mocha": "^10.8.2",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^5.7.3"
+  }
+}

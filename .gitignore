@@ -1,0 +1,17 @@
+node_modules/
+app/node_modules/
+app/.next/
+app/tsconfig.tsbuildinfo
+app/next-env.d.ts
+target/
+test-ledger/
+.anchor/
+.env
+.env.*
+!.env.example
+app/.env
+app/.env.*
+!app/.env.example
+*-keypair.json
+*.sarif
+*.log

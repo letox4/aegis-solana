@@ -1,0 +1,373 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+/* ============================================================================
+ * Precision Ultra-Slim Dark Scrollbars (Eliminates Windows light gray tracks)
+ * ============================================================================ */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.34) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 116, 139, 0.32);
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(94, 234, 212, 0.5);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+body {
+  background-color: #05070b;
+  color: #e2e8f0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================================================
+ * 144Hz/240Hz GPU-Composited Ambient Background Motion (Zero JS Loop)
+ * ============================================================================ */
+
+@keyframes aegisDriftTeal {
+  0%,
+  100% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(8%, 6%, 0) scale(1.06);
+  }
+}
+
+@keyframes aegisDriftViolet {
+  0%,
+  100% {
+    transform: translate3d(6%, 4%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-8%, -6%, 0) scale(1.07);
+  }
+}
+
+@keyframes aegisSheenSweep {
+  0% {
+    transform: translate3d(-35%, -25%, 0) rotate(-18deg);
+  }
+  50% {
+    transform: translate3d(30%, 20%, 0) rotate(-18deg);
+  }
+  100% {
+    transform: translate3d(-35%, -25%, 0) rotate(-18deg);
+  }
+}
+
+.aegis-orb-teal {
+  position: absolute;
+  top: -18%;
+  left: 8%;
+  width: 58vw;
+  height: 58vw;
+  max-width: 820px;
+  max-height: 820px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(45, 212, 191, 0.095) 0%,
+    rgba(20, 184, 166, 0.035) 42%,
+    transparent 70%
+  );
+  will-change: transform;
+  animation: aegisDriftTeal 22s ease-in-out infinite;
+}
+
+.aegis-orb-violet {
+  position: absolute;
+  bottom: -22%;
+  right: 4%;
+  width: 54vw;
+  height: 54vw;
+  max-width: 780px;
+  max-height: 780px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(148, 163, 184, 0.075) 0%,
+    rgba(56, 189, 248, 0.025) 44%,
+    transparent 70%
+  );
+  will-change: transform;
+  animation: aegisDriftViolet 26s ease-in-out infinite;
+}
+
+.aegis-hex-sheen {
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(
+    90deg,
+    transparent 35%,
+    rgba(148, 163, 184, 0.022) 48%,
+    rgba(94, 234, 212, 0.035) 50%,
+    rgba(148, 163, 184, 0.018) 52%,
+    transparent 65%
+  );
+  will-change: transform;
+  animation: aegisSheenSweep 18s ease-in-out infinite;
+}
+
+/* ============================================================================
+ * Precision 1px Hairline Specular Titanium Borders (Linear / Institutional Style)
+ * 90% Graphite/Titanium surfaces + single Ice-Teal primary accent
+ * ============================================================================ */
+
+.aegis-box,
+.aegis-box-accent,
+.aegis-box-steel,
+.aegis-box-indigo {
+  position: relative;
+  border: none;
+  isolation: isolate;
+  contain: layout style paint;
+}
+
+.aegis-box::before,
+.aegis-box-accent::before,
+.aegis-box-steel::before,
+.aegis-box-indigo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  z-index: 2;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Variant 1: Obsidian Titanium */
+.aegis-box {
+  background: linear-gradient(
+    160deg,
+    rgba(14, 19, 28, 0.94) 0%,
+    rgba(8, 11, 17, 0.97) 55%,
+    rgba(11, 15, 23, 0.94) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+    0 20px 44px -24px rgba(0, 0, 0, 0.92);
+}
+.aegis-box::before {
+  background: linear-gradient(
+    142deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(148, 163, 184, 0.13) 32%,
+    rgba(51, 65, 85, 0.08) 68%,
+    rgba(148, 163, 184, 0.15) 100%
+  );
+}
+
+/* Variant 2: Ice-Teal Specular */
+.aegis-box-accent {
+  background: linear-gradient(
+    155deg,
+    rgba(12, 21, 27, 0.94) 0%,
+    rgba(8, 11, 17, 0.97) 58%,
+    rgba(10, 17, 23, 0.94) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 0 rgba(94, 234, 212, 0.09),
+    0 20px 44px -24px rgba(0, 0, 0, 0.92);
+}
+.aegis-box-accent::before {
+  background: linear-gradient(
+    136deg,
+    rgba(94, 234, 212, 0.36) 0%,
+    rgba(45, 212, 191, 0.14) 34%,
+    rgba(51, 65, 85, 0.08) 70%,
+    rgba(148, 163, 184, 0.15) 100%
+  );
+}
+
+/* Variant 3: Cold Chrome Steel */
+.aegis-box-steel {
+  background: linear-gradient(
+    162deg,
+    rgba(14, 19, 29, 0.94) 0%,
+    rgba(8, 11, 17, 0.97) 54%,
+    rgba(11, 16, 24, 0.94) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 0 rgba(226, 232, 240, 0.065),
+    0 20px 44px -24px rgba(0, 0, 0, 0.92);
+}
+.aegis-box-steel::before {
+  background: linear-gradient(
+    145deg,
+    rgba(226, 232, 240, 0.25) 0%,
+    rgba(148, 163, 184, 0.13) 36%,
+    rgba(51, 65, 85, 0.08) 72%,
+    rgba(148, 163, 184, 0.16) 100%
+  );
+}
+
+/* Variant 4: Smoked Graphite Slate (Replaces loud purple tint for institutional cohesion) */
+.aegis-box-indigo {
+  background: linear-gradient(
+    156deg,
+    rgba(13, 18, 27, 0.94) 0%,
+    rgba(7, 10, 16, 0.97) 56%,
+    rgba(10, 15, 23, 0.94) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 0 rgba(203, 213, 225, 0.07),
+    0 20px 44px -24px rgba(0, 0, 0, 0.92);
+}
+.aegis-box-indigo::before {
+  background: linear-gradient(
+    138deg,
+    rgba(203, 213, 225, 0.24) 0%,
+    rgba(100, 116, 139, 0.13) 36%,
+    rgba(51, 65, 85, 0.08) 70%,
+    rgba(94, 234, 212, 0.18) 100%
+  );
+}
+
+/* Sliding Framer Motion active tab pill */
+.aegis-tab-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    150deg,
+    rgba(21, 30, 44, 0.95) 0%,
+    rgba(11, 16, 25, 0.98) 100%
+  );
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.09);
+}
+
+/* Institutional Button Hierarchy */
+.aegis-btn-primary {
+  background: linear-gradient(180deg, #5eead4 0%, #2dd4bf 100%);
+  color: #041014;
+  border: 1px solid rgba(153, 246, 228, 0.55);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+  transition: filter 0.14s ease, transform 0.12s ease;
+}
+.aegis-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.aegis-btn-secondary {
+  background: linear-gradient(180deg, rgba(20, 27, 40, 0.95) 0%, rgba(11, 15, 24, 0.98) 100%);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  transition: border-color 0.14s ease, color 0.14s ease, background-color 0.14s ease;
+}
+.aegis-btn-secondary:hover:not(:disabled) {
+  border-color: rgba(94, 234, 212, 0.48);
+  color: #ffffff;
+}
+
+/* Clean recessed inner sub-boxes */
+.aegis-subbox {
+  position: relative;
+  background: linear-gradient(
+    165deg,
+    rgba(11, 16, 25, 0.78) 0%,
+    rgba(6, 9, 15, 0.90) 100%
+  );
+  border: 1px solid rgba(148, 163, 184, 0.10);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+/* Semantic tactical panels (Reserved strictly for real risk/verified states) */
+.aegis-card-danger {
+  background: linear-gradient(
+    148deg,
+    rgba(48, 14, 24, 0.50) 0%,
+    rgba(13, 9, 15, 0.88) 58%,
+    rgba(30, 11, 19, 0.45) 100%
+  );
+  border: 1px solid rgba(244, 63, 94, 0.20);
+  border-left: 2.5px solid rgba(251, 113, 133, 0.72);
+  box-shadow: inset 0 1px 0 0 rgba(251, 113, 133, 0.08);
+}
+
+.aegis-card-safe {
+  background: linear-gradient(
+    148deg,
+    rgba(11, 38, 38, 0.50) 0%,
+    rgba(8, 13, 20, 0.88) 58%,
+    rgba(11, 30, 32, 0.45) 100%
+  );
+  border: 1px solid rgba(45, 212, 191, 0.22);
+  border-left: 2.5px solid rgba(94, 234, 212, 0.75);
+  box-shadow: inset 0 1px 0 0 rgba(94, 234, 212, 0.08);
+}
+
+.aegis-card-warn {
+  background: linear-gradient(
+    148deg,
+    rgba(44, 30, 11, 0.48) 0%,
+    rgba(12, 11, 16, 0.88) 58%,
+    rgba(32, 22, 10, 0.42) 100%
+  );
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  border-left: 2.5px solid rgba(251, 191, 36, 0.72);
+  box-shadow: inset 0 1px 0 0 rgba(251, 191, 36, 0.07);
+}
+
+.font-display {
+  font-family: var(--font-display), sans-serif;
+}
+
+/* Solana Wallet Adapter sleek minimal dark theme */
+.wallet-adapter-button {
+  background: linear-gradient(180deg, rgba(20, 27, 40, 0.96) 0%, rgba(10, 14, 22, 0.98) 100%) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(148, 163, 184, 0.24) !important;
+  font-family: var(--font-sans), sans-serif !important;
+  font-weight: 500 !important;
+  border-radius: 0.6rem !important;
+  height: 34px !important;
+  padding: 0 13px !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.01em !important;
+  transition: border-color 0.15s ease, color 0.15s ease !important;
+}
+
+.wallet-adapter-button:hover {
+  border-color: rgba(94, 234, 212, 0.55) !important;
+  color: #ffffff !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background: linear-gradient(160deg, #0e1420 0%, #070a11 100%) !important;
+  border: 1px solid rgba(148, 163, 184, 0.20) !important;
+}

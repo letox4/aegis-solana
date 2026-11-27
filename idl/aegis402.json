@@ -1,0 +1,2377 @@
+{
+  "address": "8AaU3VSHXHyKcVTe9JCA67oRR5djpjfAUgcM1cCtpe7p",
+  "metadata": {
+    "name": "aegis402",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Aegis402: Trustless Bug Bounty Vaults (Commit-Reveal), Whitehat Reputation & x402 Audit Attestations on Solana"
+  },
+  "instructions": [
+    {
+      "name": "approve_and_payout",
+      "docs": [
+        "Protocol authority approves a Committed/Revealed/Disputed finding, releases rent-safe SOL",
+        "from PDA escrow, and awards anti-Sybil reputation."
+      ],
+      "discriminator": [
+        105,
+        214,
+        1,
+        188,
+        213,
+        196,
+        49,
+        250
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "bounty_vault"
+          ]
+        },
+        {
+          "name": "bounty_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  117,
+                  110,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.bounty_id",
+                "account": "BountyVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_sol_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finding_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              },
+              {
+                "kind": "account",
+                "path": "researcher"
+              },
+              {
+                "kind": "account",
+                "path": "finding_report.finding_id",
+                "account": "FindingReport"
+              }
+            ]
+          }
+        },
+        {
+          "name": "whitehat_profile",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  104,
+                  105,
+                  116,
+                  101,
+                  104,
+                  97,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "researcher"
+              }
+            ]
+          }
+        },
+        {
+          "name": "researcher",
+          "writable": true,
+          "relations": [
+            "finding_report",
+            "whitehat_profile"
+          ]
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "payout_lamports",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "close_bounty",
+      "docs": [
+        "Protocol authority closes the bounty vault ONLY when zero unresolved findings remain",
+        "AND any post-Reveal anti-poaching cooldown window has expired, sweeping 100% of escrow SOL."
+      ],
+      "discriminator": [
+        90,
+        33,
+        205,
+        110,
+        210,
+        22,
+        247,
+        49
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "bounty_vault"
+          ]
+        },
+        {
+          "name": "bounty_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  117,
+                  110,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.bounty_id",
+                "account": "BountyVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_sol_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault_cooldown",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  111,
+                  108,
+                  100,
+                  111,
+                  119,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_bounty",
+      "docs": [
+        "Protocol creates a trustless SOL Bug Bounty Vault backed by a rent-safe PDA escrow."
+      ],
+      "discriminator": [
+        122,
+        90,
+        14,
+        143,
+        8,
+        125,
+        200,
+        2
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bounty_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  117,
+                  110,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "arg",
+                "path": "bounty_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_sol_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "bounty_id",
+          "type": "u64"
+        },
+        {
+          "name": "target_name",
+          "type": "string"
+        },
+        {
+          "name": "scope_uri",
+          "type": "string"
+        },
+        {
+          "name": "reward_lamports",
+          "type": "u64"
+        },
+        {
+          "name": "max_payout_per_finding",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "initialize_arbitrator",
+      "docs": [
+        "Initializes the cluster-wide arbitration oracle keypair once.",
+        "On BPFLoaderUpgradeable (Devnet/Mainnet), cryptographically enforces that ONLY the",
+        "program's upgrade authority can initialize `arb_config` (100% immune to front-running)."
+      ],
+      "discriminator": [
+        105,
+        157,
+        215,
+        134,
+        214,
+        75,
+        135,
+        189
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "arb_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  114,
+                  98,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program_account",
+          "address": "8AaU3VSHXHyKcVTe9JCA67oRR5djpjfAUgcM1cCtpe7p"
+        },
+        {
+          "name": "program_data"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "arbitrator",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "raise_dispute",
+      "docs": [
+        "Whitehat challenges an unfair rejection of a cryptographically Revealed finding.",
+        "Re-locks `pending_findings += 1` (freezing escrow withdrawal) and opens on-chain arbitration."
+      ],
+      "discriminator": [
+        41,
+        243,
+        1,
+        51,
+        150,
+        95,
+        246,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "researcher",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "finding_report"
+          ]
+        },
+        {
+          "name": "bounty_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  117,
+                  110,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.authority",
+                "account": "BountyVault"
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.bounty_id",
+                "account": "BountyVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finding_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              },
+              {
+                "kind": "account",
+                "path": "researcher"
+              },
+              {
+                "kind": "account",
+                "path": "finding_report.finding_id",
+                "account": "FindingReport"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dispute_ticket",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  105,
+                  115,
+                  112,
+                  117,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "finding_report"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "reason_uri",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "record_audit_attestation",
+      "docs": [
+        "Seals an x402 security audit attestation permanently on Solana Devnet.",
+        "Inspects the Solana Instructions Sysvar for a preceding Ed25519Program signature from",
+        "AEGIS_ATTESTER_PUBKEY over the exact canonical report+source hash payload."
+      ],
+      "discriminator": [
+        150,
+        184,
+        0,
+        127,
+        103,
+        134,
+        108,
+        142
+      ],
+      "accounts": [
+        {
+          "name": "auditor",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "audit_attestation",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  117,
+                  100,
+                  105,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "auditor"
+              },
+              {
+                "kind": "arg",
+                "path": "scan_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "instructions_sysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "scan_id",
+          "type": "u64"
+        },
+        {
+          "name": "target_program_id",
+          "type": "pubkey"
+        },
+        {
+          "name": "source_code_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "report_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "security_score",
+          "type": "u8"
+        },
+        {
+          "name": "critical_count",
+          "type": "u8"
+        },
+        {
+          "name": "high_count",
+          "type": "u8"
+        },
+        {
+          "name": "x402_payment_sig",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "reject_finding",
+      "docs": [
+        "Protocol authority rejects an invalid/duplicate finding.",
+        "ANTI-POACHING GAME THEORY: If the finding was already cryptographically `Revealed`,",
+        "rejecting it triggers a 24h `VaultCooldown` lock blocking `close_bounty` so the",
+        "researcher cannot be front-run by an atomic `[reject_finding, close_bounty]` bundle",
+        "and has guaranteed time to invoke `raise_dispute`!"
+      ],
+      "discriminator": [
+        123,
+        232,
+        177,
+        100,
+        232,
+        211,
+        192,
+        161
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "bounty_vault"
+          ]
+        },
+        {
+          "name": "bounty_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  117,
+                  110,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "authority"
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.bounty_id",
+                "account": "BountyVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finding_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              },
+              {
+                "kind": "account",
+                "path": "finding_report.researcher",
+                "account": "FindingReport"
+              },
+              {
+                "kind": "account",
+                "path": "finding_report.finding_id",
+                "account": "FindingReport"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault_cooldown",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  111,
+                  108,
+                  100,
+                  111,
+                  119,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "resolve_dispute",
+      "docs": [
+        "Independent AEGIS Arbitration Oracle resolves a disputed finding (authorized via direct",
+        "arbitrator signature OR inline Ed25519Program Sysvar signature). If upheld, releases the",
+        "bounty directly from PDA escrow to the researcher even if the protocol owner refuses to pay."
+      ],
+      "discriminator": [
+        231,
+        6,
+        202,
+        6,
+        96,
+        103,
+        12,
+        230
+      ],
+      "accounts": [
+        {
+          "name": "caller",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bounty_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  117,
+                  110,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.authority",
+                "account": "BountyVault"
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.bounty_id",
+                "account": "BountyVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_sol_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finding_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              },
+              {
+                "kind": "account",
+                "path": "researcher"
+              },
+              {
+                "kind": "account",
+                "path": "finding_report.finding_id",
+                "account": "FindingReport"
+              }
+            ]
+          }
+        },
+        {
+          "name": "dispute_ticket",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  105,
+                  115,
+                  112,
+                  117,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "finding_report"
+              }
+            ]
+          }
+        },
+        {
+          "name": "whitehat_profile",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  104,
+                  105,
+                  116,
+                  101,
+                  104,
+                  97,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "researcher"
+              }
+            ]
+          }
+        },
+        {
+          "name": "researcher",
+          "writable": true,
+          "relations": [
+            "finding_report",
+            "whitehat_profile"
+          ]
+        },
+        {
+          "name": "arb_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  114,
+                  98,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "instructions_sysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "uphold_researcher",
+          "type": "bool"
+        },
+        {
+          "name": "award_lamports",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "reveal_finding",
+      "docs": [
+        "Whitehat cryptographically reveals PoC summary + salt; Solana runtime verifies SHA-256 on-chain!"
+      ],
+      "discriminator": [
+        225,
+        102,
+        108,
+        71,
+        197,
+        131,
+        12,
+        78
+      ],
+      "accounts": [
+        {
+          "name": "researcher",
+          "signer": true,
+          "relations": [
+            "finding_report"
+          ]
+        },
+        {
+          "name": "finding_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "finding_report.bounty",
+                "account": "FindingReport"
+              },
+              {
+                "kind": "account",
+                "path": "researcher"
+              },
+              {
+                "kind": "account",
+                "path": "finding_report.finding_id",
+                "account": "FindingReport"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "poc_summary",
+          "type": "string"
+        },
+        {
+          "name": "salt",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "submit_finding_commit",
+      "docs": [
+        "Whitehat commits SHA-256(poc_summary || \"||\" || salt) on-chain.",
+        "Locks cryptographic timestamp proof without leaking exploit details, and prevents protocol rug-pull."
+      ],
+      "discriminator": [
+        26,
+        166,
+        9,
+        71,
+        176,
+        186,
+        213,
+        32
+      ],
+      "accounts": [
+        {
+          "name": "researcher",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bounty_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  117,
+                  110,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.authority",
+                "account": "BountyVault"
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.bounty_id",
+                "account": "BountyVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "finding_report",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  102,
+                  105,
+                  110,
+                  100,
+                  105,
+                  110,
+                  103
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              },
+              {
+                "kind": "account",
+                "path": "researcher"
+              },
+              {
+                "kind": "arg",
+                "path": "finding_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "whitehat_profile",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  119,
+                  104,
+                  105,
+                  116,
+                  101,
+                  104,
+                  97,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "researcher"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "finding_id",
+          "type": "u64"
+        },
+        {
+          "name": "commit_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        },
+        {
+          "name": "severity",
+          "type": "u8"
+        },
+        {
+          "name": "encrypted_report_uri",
+          "type": "string"
+        },
+        {
+          "name": "researcher_handle",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "top_up_bounty",
+      "docs": [
+        "Anyone (protocol treasury or LI.FI bridge recipient) can top up an active bounty pool."
+      ],
+      "discriminator": [
+        92,
+        218,
+        186,
+        142,
+        94,
+        191,
+        155,
+        242
+      ],
+      "accounts": [
+        {
+          "name": "funder",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bounty_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  117,
+                  110,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.authority",
+                "account": "BountyVault"
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault.bounty_id",
+                "account": "BountyVault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow_sol_vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119,
+                  95,
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bounty_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount_lamports",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "ArbitrationConfig",
+      "discriminator": [
+        141,
+        34,
+        18,
+        130,
+        195,
+        51,
+        170,
+        66
+      ]
+    },
+    {
+      "name": "AuditAttestation",
+      "discriminator": [
+        252,
+        176,
+        178,
+        91,
+        42,
+        224,
+        210,
+        114
+      ]
+    },
+    {
+      "name": "BountyVault",
+      "discriminator": [
+        76,
+        109,
+        75,
+        2,
+        194,
+        210,
+        53,
+        5
+      ]
+    },
+    {
+      "name": "DisputeTicket",
+      "discriminator": [
+        234,
+        86,
+        115,
+        59,
+        99,
+        221,
+        10,
+        41
+      ]
+    },
+    {
+      "name": "FindingReport",
+      "discriminator": [
+        253,
+        197,
+        229,
+        78,
+        81,
+        131,
+        212,
+        74
+      ]
+    },
+    {
+      "name": "VaultCooldown",
+      "discriminator": [
+        155,
+        82,
+        61,
+        43,
+        65,
+        225,
+        76,
+        34
+      ]
+    },
+    {
+      "name": "WhitehatProfile",
+      "discriminator": [
+        80,
+        242,
+        164,
+        219,
+        206,
+        29,
+        131,
+        59
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AuditAttestedEvent",
+      "discriminator": [
+        95,
+        72,
+        250,
+        246,
+        138,
+        216,
+        85,
+        3
+      ]
+    },
+    {
+      "name": "BountyClosedEvent",
+      "discriminator": [
+        126,
+        88,
+        250,
+        4,
+        194,
+        49,
+        99,
+        114
+      ]
+    },
+    {
+      "name": "BountyCreatedEvent",
+      "discriminator": [
+        38,
+        84,
+        95,
+        56,
+        81,
+        242,
+        52,
+        88
+      ]
+    },
+    {
+      "name": "BountyFundedEvent",
+      "discriminator": [
+        152,
+        174,
+        227,
+        11,
+        156,
+        25,
+        8,
+        0
+      ]
+    },
+    {
+      "name": "DisputeRaisedEvent",
+      "discriminator": [
+        89,
+        136,
+        174,
+        60,
+        243,
+        203,
+        120,
+        85
+      ]
+    },
+    {
+      "name": "DisputeResolvedEvent",
+      "discriminator": [
+        152,
+        37,
+        98,
+        245,
+        229,
+        39,
+        150,
+        78
+      ]
+    },
+    {
+      "name": "FindingApprovedEvent",
+      "discriminator": [
+        189,
+        76,
+        228,
+        251,
+        189,
+        52,
+        166,
+        154
+      ]
+    },
+    {
+      "name": "FindingCommittedEvent",
+      "discriminator": [
+        20,
+        30,
+        217,
+        251,
+        200,
+        221,
+        186,
+        178
+      ]
+    },
+    {
+      "name": "FindingRejectedEvent",
+      "discriminator": [
+        200,
+        107,
+        3,
+        73,
+        193,
+        228,
+        113,
+        243
+      ]
+    },
+    {
+      "name": "FindingRevealedEvent",
+      "discriminator": [
+        175,
+        211,
+        214,
+        158,
+        106,
+        240,
+        118,
+        181
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized caller for this bounty vault."
+    },
+    {
+      "code": 6001,
+      "name": "InvalidTargetName",
+      "msg": "Target name must be between 1 and 64 characters."
+    },
+    {
+      "code": 6002,
+      "name": "InvalidScopeUri",
+      "msg": "Scope URI must be between 1 and 200 characters."
+    },
+    {
+      "code": 6003,
+      "name": "ZeroAmount",
+      "msg": "Amount must be greater than zero."
+    },
+    {
+      "code": 6004,
+      "name": "BelowRentExemptMinimum",
+      "msg": "Deposit is below Solana's rent-exempt minimum for a SOL vault."
+    },
+    {
+      "code": 6005,
+      "name": "RentExemptViolation",
+      "msg": "Transfer would leave an account with non-zero dust below rent-exempt minimum."
+    },
+    {
+      "code": 6006,
+      "name": "InvalidMaxPayout",
+      "msg": "Max payout per finding must be > 0 and <= total deposit."
+    },
+    {
+      "code": 6007,
+      "name": "BountyClosed",
+      "msg": "This bounty vault is closed."
+    },
+    {
+      "code": 6008,
+      "name": "PendingFindingsExist",
+      "msg": "Cannot close bounty vault while unresolved findings are still pending."
+    },
+    {
+      "code": 6009,
+      "name": "AntiPoachingCooldownActive",
+      "msg": "Anti-poaching 24h cooldown is active after rejecting a Revealed PoC; whitehat may raise arbitration."
+    },
+    {
+      "code": 6010,
+      "name": "MustRevealBeforeDispute",
+      "msg": "Only cryptographically Revealed findings can be escalated to arbitration."
+    },
+    {
+      "code": 6011,
+      "name": "InvalidDisputeState",
+      "msg": "Finding is not in a valid state for dispute or arbitration."
+    },
+    {
+      "code": 6012,
+      "name": "DisputeWindowExpired",
+      "msg": "The 7-day dispute challenge window for this rejection has expired."
+    },
+    {
+      "code": 6013,
+      "name": "UnauthorizedArbitrator",
+      "msg": "Caller is not the authorized AEGIS arbitration oracle."
+    },
+    {
+      "code": 6014,
+      "name": "InvalidArbitrator",
+      "msg": "Arbitrator public key cannot be default zeroes."
+    },
+    {
+      "code": 6015,
+      "name": "InvalidSeverity",
+      "msg": "Severity must be 1 (Low), 2 (Medium), 3 (High), or 4 (Critical)."
+    },
+    {
+      "code": 6016,
+      "name": "InvalidReportUri",
+      "msg": "Encrypted report URI must be between 1 and 200 characters."
+    },
+    {
+      "code": 6017,
+      "name": "InvalidHandle",
+      "msg": "Researcher handle must be between 1 and 32 characters."
+    },
+    {
+      "code": 6018,
+      "name": "InvalidCommitHash",
+      "msg": "Commit hash cannot be all zeroes."
+    },
+    {
+      "code": 6019,
+      "name": "InvalidRevealSummary",
+      "msg": "Reveal summary must be between 1 and 160 characters."
+    },
+    {
+      "code": 6020,
+      "name": "InvalidSalt",
+      "msg": "Salt must be between 1 and 64 characters."
+    },
+    {
+      "code": 6021,
+      "name": "CommitHashMismatch",
+      "msg": "Revealed PoC + salt SHA-256 digest does not match on-chain commit_hash."
+    },
+    {
+      "code": 6022,
+      "name": "FindingAlreadyResolved",
+      "msg": "This finding has already been resolved."
+    },
+    {
+      "code": 6023,
+      "name": "ExceedsMaxPayout",
+      "msg": "Payout exceeds the bounty's max payout per finding."
+    },
+    {
+      "code": 6024,
+      "name": "InsufficientVaultFunds",
+      "msg": "Escrow vault has insufficient funds for this payout."
+    },
+    {
+      "code": 6025,
+      "name": "BountyMismatch",
+      "msg": "Finding does not belong to this bounty vault."
+    },
+    {
+      "code": 6026,
+      "name": "ResearcherMismatch",
+      "msg": "Researcher account does not match finding record."
+    },
+    {
+      "code": 6027,
+      "name": "ArithmeticOverflow",
+      "msg": "Arithmetic overflow or underflow detected."
+    },
+    {
+      "code": 6028,
+      "name": "InvalidSecurityScore",
+      "msg": "Security score must be between 0 and 100."
+    },
+    {
+      "code": 6029,
+      "name": "InvalidPaymentSig",
+      "msg": "x402 payment signature must be between 1 and 96 characters."
+    },
+    {
+      "code": 6030,
+      "name": "InvalidSysvarInstruction",
+      "msg": "Invalid Solana Instructions Sysvar lookup."
+    }
+  ],
+  "types": [
+    {
+      "name": "ArbitrationConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "arbitrator",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AuditAttestation",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "auditor",
+            "type": "pubkey"
+          },
+          {
+            "name": "scan_id",
+            "type": "u64"
+          },
+          {
+            "name": "target_program_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "source_code_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "report_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "security_score",
+            "type": "u8"
+          },
+          {
+            "name": "critical_count",
+            "type": "u8"
+          },
+          {
+            "name": "high_count",
+            "type": "u8"
+          },
+          {
+            "name": "x402_payment_sig",
+            "type": "string"
+          },
+          {
+            "name": "is_verified_oracle",
+            "type": "bool"
+          },
+          {
+            "name": "audited_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AuditAttestedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "attestation",
+            "type": "pubkey"
+          },
+          {
+            "name": "auditor",
+            "type": "pubkey"
+          },
+          {
+            "name": "target_program_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "source_code_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "report_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "security_score",
+            "type": "u8"
+          },
+          {
+            "name": "critical_count",
+            "type": "u8"
+          },
+          {
+            "name": "high_count",
+            "type": "u8"
+          },
+          {
+            "name": "is_verified_oracle",
+            "type": "bool"
+          },
+          {
+            "name": "x402_payment_sig",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BountyClosedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "refunded_lamports",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BountyCreatedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "bounty_id",
+            "type": "u64"
+          },
+          {
+            "name": "target_name",
+            "type": "string"
+          },
+          {
+            "name": "reward_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BountyFundedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "funder",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "new_pool",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BountyVault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "bounty_id",
+            "type": "u64"
+          },
+          {
+            "name": "target_name",
+            "type": "string"
+          },
+          {
+            "name": "scope_uri",
+            "type": "string"
+          },
+          {
+            "name": "total_deposited",
+            "type": "u64"
+          },
+          {
+            "name": "remaining_pool",
+            "type": "u64"
+          },
+          {
+            "name": "max_payout_per_finding",
+            "type": "u64"
+          },
+          {
+            "name": "findings_count",
+            "type": "u32"
+          },
+          {
+            "name": "pending_findings",
+            "type": "u32"
+          },
+          {
+            "name": "approved_count",
+            "type": "u32"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "vault_bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DisputeRaisedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding",
+            "type": "pubkey"
+          },
+          {
+            "name": "dispute_ticket",
+            "type": "pubkey"
+          },
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DisputeResolvedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding",
+            "type": "pubkey"
+          },
+          {
+            "name": "dispute_ticket",
+            "type": "pubkey"
+          },
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "upheld",
+            "type": "bool"
+          },
+          {
+            "name": "awarded_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DisputeTicket",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding",
+            "type": "pubkey"
+          },
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "reason_uri",
+            "type": "string"
+          },
+          {
+            "name": "opened_at",
+            "type": "i64"
+          },
+          {
+            "name": "resolved",
+            "type": "bool"
+          },
+          {
+            "name": "upheld",
+            "type": "bool"
+          },
+          {
+            "name": "awarded_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "resolved_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FindingApprovedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding",
+            "type": "pubkey"
+          },
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "payout_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "reputation_score",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FindingCommittedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding",
+            "type": "pubkey"
+          },
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding_id",
+            "type": "u64"
+          },
+          {
+            "name": "commit_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "severity",
+            "type": "u8"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FindingRejectedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding",
+            "type": "pubkey"
+          },
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "was_revealed",
+            "type": "bool"
+          },
+          {
+            "name": "cooldown_unlock_at",
+            "type": "i64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FindingReport",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding_id",
+            "type": "u64"
+          },
+          {
+            "name": "commit_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "severity",
+            "type": "u8"
+          },
+          {
+            "name": "encrypted_report_uri",
+            "type": "string"
+          },
+          {
+            "name": "revealed_summary",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "FindingStatus"
+              }
+            }
+          },
+          {
+            "name": "payout_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "submitted_at",
+            "type": "i64"
+          },
+          {
+            "name": "resolved_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FindingRevealedEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "finding",
+            "type": "pubkey"
+          },
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FindingStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Committed"
+          },
+          {
+            "name": "Revealed"
+          },
+          {
+            "name": "Approved"
+          },
+          {
+            "name": "Rejected"
+          },
+          {
+            "name": "Disputed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultCooldown",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bounty",
+            "type": "pubkey"
+          },
+          {
+            "name": "unlock_at",
+            "type": "i64"
+          },
+          {
+            "name": "last_rejected_finding",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "WhitehatProfile",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "researcher",
+            "type": "pubkey"
+          },
+          {
+            "name": "handle",
+            "type": "string"
+          },
+          {
+            "name": "total_submissions",
+            "type": "u32"
+          },
+          {
+            "name": "approved_findings",
+            "type": "u32"
+          },
+          {
+            "name": "total_earned_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "reputation_score",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

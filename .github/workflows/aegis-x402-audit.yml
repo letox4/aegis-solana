@@ -29,7 +29,7 @@ jobs:
 
       - name: Run Autonomous x402 V2 Solana Security Scan
         env:
-          AEGIS_SCAN_ENDPOINT: ${{ vars.AEGIS_SCAN_ENDPOINT || 'https://aegis-solana.vercel.app/api/x402/scan' }}
+          AEGIS_SCAN_ENDPOINT: ${{ vars.AEGIS_SCAN_ENDPOINT || 'https://aegis-solana-gamma.vercel.app/api/x402/scan' }}
           SOLANA_KEYPAIR_JSON: ${{ secrets.SOLANA_DEVNET_KEYPAIR_JSON }}
         run: |
           if [ -n "$SOLANA_KEYPAIR_JSON" ]; then

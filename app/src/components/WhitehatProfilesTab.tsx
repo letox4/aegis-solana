@@ -28,7 +28,7 @@ export function WhitehatProfilesTab({ whitehats, attestations }: WhitehatProfile
 
   function copyBadgeMarkdown(programId: string) {
     const origin =
-      typeof window !== "undefined" ? window.location.origin : "https://aegis-solana.vercel.app";
+      typeof window !== "undefined" ? window.location.origin : "https://aegis-solana-gamma.vercel.app";
     const md = `[![AEGIS On-Chain Audit](${origin}/api/badge/${programId})](https://explorer.solana.com/address/${programId}?cluster=devnet)`;
     navigator.clipboard.writeText(md);
     setCopiedBadgeId(programId);

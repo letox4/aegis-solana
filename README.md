@@ -12,6 +12,9 @@
 </p>
 
 <p>
+  <a href="https://aegis-solana-gamma.vercel.app">
+    <img src="https://img.shields.io/badge/Live_Demo-Launch_App-0d131f?style=for-the-badge&logo=vercel&logoColor=5eead4&labelColor=05070b&color=0f766e" alt="Live Production App" />
+  </a>
   <a href="https://explorer.solana.com/address/8AaU3VSHXHyKcVTe9JCA67oRR5djpjfAUgcM1cCtpe7p?cluster=devnet">
     <img src="https://img.shields.io/badge/Solana_Devnet-Live_v3.0-0d131f?style=for-the-badge&logo=solana&logoColor=5eead4&labelColor=05070b&color=134e4a" alt="Solana Devnet Live v3.0" />
   </a>
@@ -31,7 +34,7 @@
 
 <p>
   <a href="https://explorer.solana.com/address/8AaU3VSHXHyKcVTe9JCA67oRR5djpjfAUgcM1cCtpe7p?cluster=devnet">
-    <img src="https://aegis-solana.vercel.app/api/badge/8AaU3VSHXHyKcVTe9JCA67oRR5djpjfAUgcM1cCtpe7p" alt="AEGIS Live On-Chain Audit Badge" />
+    <img src="https://aegis-solana-gamma.vercel.app/api/badge/8AaU3VSHXHyKcVTe9JCA67oRR5djpjfAUgcM1cCtpe7p" alt="AEGIS Live On-Chain Audit Badge" />
   </a>
 </p>
 
@@ -57,6 +60,7 @@
 
 | Artifact | Value / Verification Link |
 | :--- | :--- |
+| **Live Production Web App (Vercel)** | [**https://aegis-solana-gamma.vercel.app**](https://aegis-solana-gamma.vercel.app) |
 | **Solana Devnet Program ID (v3.0)** | [`8AaU3VSHXHyKcVTe9JCA67oRR5djpjfAUgcM1cCtpe7p`](https://explorer.solana.com/address/8AaU3VSHXHyKcVTe9JCA67oRR5djpjfAUgcM1cCtpe7p?cluster=devnet) |
 | **On-Chain Compressed Anchor IDL (`anchor:idl`)** | [`4eqNqueh9JDD7j614TynsRPCtXSBRvzCs4XVdHXbjNa9`](https://explorer.solana.com/address/4eqNqueh9JDD7j614TynsRPCtXSBRvzCs4XVdHXbjNa9?cluster=devnet) (`zlib` inflated live in UI) |
 | **Arbitration Config PDA (`arb_config`)** | [`9mEvVeuQMn1zvgrRX1D3o7DoHswA94eXj28pahme8XeM`](https://explorer.solana.com/address/9mEvVeuQMn1zvgrRX1D3o7DoHswA94eXj28pahme8XeM?cluster=devnet) |
@@ -67,7 +71,7 @@
 **Headless Autonomous AI Agent CLI & SARIF 2.1.0 CI Gate:**
 
 ```bash
-node scripts/x402-agent-demo.mjs <LIVE_URL_OR_LOCALHOST>/api/x402/scan \
+node scripts/x402-agent-demo.mjs https://aegis-solana-gamma.vercel.app/api/x402/scan \
   --target programs/aegis402/src/lib.rs \
   --sarif aegis-report.sarif \
   --fail-on-critical

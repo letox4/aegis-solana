@@ -172,7 +172,7 @@ export function X402ScannerTab({
   const [copiedBadge, setCopiedBadge] = useState(false);
   const [findingTabs, setFindingTabs] = useState<Record<string, FindingViewMode>>({});
 
-  const [originUrl, setOriginUrl] = useState("https://aegis-solana.vercel.app");
+  const [originUrl, setOriginUrl] = useState("https://aegis-solana-gamma.vercel.app");
   useEffect(() => {
     setOriginUrl(window.location.origin);
   }, []);

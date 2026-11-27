@@ -5,6 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Connection, VersionedTransaction } from "@solana/web3.js";
 import { Buffer } from "buffer";
 import { MachinedPanel } from "@/components/MachinedPanel";
+import { ChainGlyph } from "@/components/VisualPrimitives";
 import {
   ArrowRightLeft,
   Globe,
@@ -330,7 +331,10 @@ export function LifiBridgeTab({ bounties = [] }: LifiBridgeTabProps) {
                       : "border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-600"
                   }`}
                 >
-                  <span>{c.name}</span>
+                  <span className="inline-flex items-center gap-2">
+                    <ChainGlyph chain={c.id} size={20} />
+                    <span>{c.name}</span>
+                  </span>
                   <span className="font-mono text-[10px] text-slate-400">{c.tokenSymbol}</span>
                 </button>
               ))}
@@ -445,16 +449,29 @@ export function LifiBridgeTab({ bounties = [] }: LifiBridgeTabProps) {
           )}
 
           {!quote && !error && (
-            <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed border-slate-800 p-6 text-center">
-              <Globe className="mb-3 h-8 w-8 text-slate-600" />
-              <p className="text-sm font-medium text-slate-300">
-                Fetch & execute a live cross-chain route powered by LI.FI
-              </p>
-              <p className="mt-1 max-w-md text-xs text-slate-500">
-                Queries real-time liquidity across Mayan, Wormhole, DeBridge, NearIntents, Relay, and
-                Jupiter via <code>/api/lifi/quote</code>, signs the live transaction directly via
-                Solana Wallet Adapter or MetaMask, and tracks bridge finality via{" "}
-                <code>/api/lifi/status</code>.
+            <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed border-slate-800/90 bg-[#05080f]/60 p-6">
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-800 bg-[#090e18] px-4 py-3">
+                  <ChainGlyph chain={mode === "fund" ? evmChain : "SOL"} size={28} />
+                  <span className="text-xs font-semibold text-slate-200">
+                    {mode === "fund" ? selectedEvmChain.name : "Solana"}
+                  </span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <span className="rounded-full border border-teal-500/30 bg-teal-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-teal-300">
+                    LI.FI Optimal Bridge
+                  </span>
+                  <div className="h-px w-20 bg-gradient-to-r from-slate-700 via-teal-400 to-slate-700" />
+                </div>
+                <div className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-800 bg-[#090e18] px-4 py-3">
+                  <ChainGlyph chain={mode === "fund" ? "SOL" : evmChain} size={28} />
+                  <span className="text-xs font-semibold text-slate-200">
+                    {mode === "fund" ? "Solana" : selectedEvmChain.name}
+                  </span>
+                </div>
+              </div>
+              <p className="mt-4 text-xs text-slate-400">
+                Select amount and fetch a live executable quote
               </p>
             </div>
           )}
@@ -462,30 +479,36 @@ export function LifiBridgeTab({ bounties = [] }: LifiBridgeTabProps) {
           {quote && (
             <div className="space-y-4">
               {/* Primary Conversion Card */}
-              <div className="aegis-subbox grid gap-3 rounded-xl p-4 sm:grid-cols-3">
-                <div>
-                  <div className="text-[11px] text-slate-400">You Send ({quote.fromChain})</div>
-                  <div className="mt-0.5 font-mono text-lg font-bold text-white">
-                    {quote.fromAmountFormatted} {quote.fromTokenSymbol}
+              <div className="aegis-subbox grid items-center gap-3 rounded-xl p-4 sm:grid-cols-3">
+                <div className="flex items-center gap-3">
+                  <ChainGlyph chain={mode === "fund" ? evmChain : "SOL"} size={30} />
+                  <div>
+                    <div className="text-[11px] text-slate-400">{quote.fromChain}</div>
+                    <div className="font-mono text-lg font-bold text-white">
+                      {quote.fromAmountFormatted} {quote.fromTokenSymbol}
+                    </div>
+                    <div className="font-mono text-xs text-slate-500">≈ ${quote.fromAmountUSD}</div>
                   </div>
-                  <div className="font-mono text-xs text-slate-500">≈ ${quote.fromAmountUSD}</div>
                 </div>
                 <div className="flex flex-col items-center justify-center">
-                  <span className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-1 font-mono text-xs font-bold text-teal-300">
+                  <span className="rounded-lg border border-teal-500/30 bg-teal-500/10 px-3 py-1 text-xs font-semibold text-teal-300">
                     via {quote.toolName}
                   </span>
                   <div className="mt-1.5 flex items-center gap-1 text-[11px] text-slate-400">
                     <Clock className="h-3 w-3 text-teal-300" /> ~{quote.executionDurationSec}s
                   </div>
                 </div>
-                <div className="sm:text-right">
-                  <div className="text-[11px] text-slate-400">Estimated Output ({quote.toChain})</div>
-                  <div className="mt-0.5 font-mono text-lg font-bold text-teal-300">
-                    {quote.toAmountFormatted} {quote.toTokenSymbol}
+                <div className="flex items-center justify-end gap-3 sm:text-right">
+                  <div>
+                    <div className="text-[11px] text-slate-400">{quote.toChain}</div>
+                    <div className="font-mono text-lg font-bold text-teal-300">
+                      {quote.toAmountFormatted} {quote.toTokenSymbol}
+                    </div>
+                    <div className="font-mono text-xs text-slate-500">
+                      ≈ ${quote.toAmountUSD}
+                    </div>
                   </div>
-                  <div className="font-mono text-xs text-slate-500">
-                    Min: {quote.toAmountMinFormatted} (≈ ${quote.toAmountUSD})
-                  </div>
+                  <ChainGlyph chain={mode === "fund" ? "SOL" : evmChain} size={30} />
                 </div>
               </div>
 
@@ -548,13 +571,11 @@ export function LifiBridgeTab({ bounties = [] }: LifiBridgeTabProps) {
                 <div className="aegis-subbox rounded-xl p-4">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <div className="font-mono text-xs font-semibold text-teal-300">
-                        2. Sign & Execute Live Bridge Transaction
+                      <div className="text-xs font-semibold text-teal-300">
+                        2. Execute Live Bridge
                       </div>
                       <p className="mt-0.5 text-[11px] text-slate-400">
-                        {mode === "payout"
-                          ? "Deserializes LI.FI VersionedTransaction and signs directly via your Solana wallet."
-                          : `Submits LI.FI transactionRequest on ${selectedEvmChain.name} via MetaMask (ERC-20 approval required if first USDC spend).`}
+                        {mode === "payout" ? "Solana Wallet Adapter" : `${selectedEvmChain.name} · MetaMask / Rabby`}
                       </p>
                     </div>
                     <button

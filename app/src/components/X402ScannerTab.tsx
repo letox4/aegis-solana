@@ -5,6 +5,11 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { motion } from "framer-motion";
 import { MachinedPanel } from "@/components/MachinedPanel";
+import {
+  ProtocolStepper,
+  ScoreRingGauge,
+  SeverityDistributionBar,
+} from "@/components/VisualPrimitives";
 import type { EscalatedFindingDraft } from "@/app/page";
 import {
   Zap,
@@ -701,18 +706,7 @@ export function X402ScannerTab({
                       {inspection.idlProgramName || "Deployed BPF Program"}
                     </h3>
                   </div>
-                  <div
-                    className={`rounded-xl border px-3 py-1.5 text-center tabular-nums ${
-                      inspection.surfaceScore >= 80
-                        ? "border-teal-400/40 bg-teal-500/10 text-teal-300"
-                        : inspection.surfaceScore >= 55
-                        ? "border-amber-400/40 bg-amber-500/10 text-amber-300"
-                        : "border-rose-500/40 bg-rose-500/10 text-rose-300"
-                    }`}
-                  >
-                    <div className="font-display text-lg font-bold leading-none">{inspection.surfaceScore}</div>
-                    <div className="mt-0.5 text-[9.5px] font-semibold tracking-wider">SURFACE</div>
-                  </div>
+                  <ScoreRingGauge score={inspection.surfaceScore} label="SURFACE" size={62} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5 text-xs">
@@ -1065,10 +1059,7 @@ export function X402ScannerTab({
               </div>
             </div>
 
-            <div className="mt-3.5 flex flex-wrap items-center justify-between gap-3">
-              <span className="text-xs text-slate-500">
-                Click any finding line reference below to jump directly inside the workspace
-              </span>
+            <div className="mt-3.5 flex items-center justify-end gap-3">
               <button
                 onClick={handleProbe402}
                 disabled={step === "probing" || step === "paying" || step === "verifying"}
@@ -1101,25 +1092,46 @@ export function X402ScannerTab({
                 </span>
               </div>
 
+              <ProtocolStepper
+                steps={[
+                  {
+                    title: "HTTP 402",
+                    sub: paymentRequired ? "Quote Ready" : "Challenge",
+                    status: paymentRequired || step === "done" ? "done" : "active",
+                  },
+                  {
+                    title: "0.001 SOL",
+                    sub: "SPL Memo TX",
+                    status:
+                      step === "done"
+                        ? "done"
+                        : paymentRequired || step === "paying" || step === "verifying"
+                        ? "active"
+                        : "idle",
+                  },
+                  {
+                    title: "Ed25519",
+                    sub: "Oracle Proof",
+                    status: step === "done" ? "done" : "idle",
+                  },
+                ]}
+              />
+
               <div className="space-y-3 text-xs">
-                <div
-                  className={`rounded-xl p-3.5 ${
-                    paymentRequired ? "aegis-card-warn" : "aegis-subbox"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-amber-300">STEP 1 · HTTP 402 Challenge</span>
-                    <span className="text-[10.5px] font-medium tracking-wide text-slate-400">
-                      {paymentRequired ? "402 PAYMENT-REQUIRED" : "WAITING"}
-                    </span>
-                  </div>
-                  {paymentRequired ? (
-                    <pre className="mt-2 max-h-40 overflow-auto rounded-lg border border-amber-500/15 bg-black/50 p-2.5 font-mono text-[10px] text-amber-200">
+                {paymentRequired ? (
+                  <div className="aegis-card-warn rounded-xl p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-amber-300">402 PAYMENT-REQUIRED</span>
+                      <span className="font-mono text-[10px] text-amber-200/80">
+                        {paymentRequired.accepts[0].extra.memoRequired}
+                      </span>
+                    </div>
+                    <pre className="mt-2 max-h-32 overflow-auto rounded-lg border border-amber-500/15 bg-black/50 p-2 font-mono text-[10px] text-amber-200">
                       {JSON.stringify(
                         {
                           x402Version: paymentRequired.x402Version,
                           network: paymentRequired.accepts[0].network,
-                          amount: `${paymentRequired.accepts[0].amount} lamports (0.001 SOL)`,
+                          amount: "0.001 SOL (1,000,000 lamports)",
                           payTo: paymentRequired.accepts[0].payTo,
                           memoRequired: paymentRequired.accepts[0].extra.memoRequired,
                         },
@@ -1127,14 +1139,16 @@ export function X402ScannerTab({
                         2
                       )}
                     </pre>
-                  ) : (
-                    <p className="mt-1.5 text-xs text-slate-400">
-                      Click &ldquo;Request Audit&rdquo; to inspect the live Base64{" "}
-                      <code className="font-mono text-[11px] text-slate-300">PAYMENT-REQUIRED</code>{" "}
-                      header + anti-sniping SPL Memo hash.
-                    </p>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div className="aegis-subbox flex items-center justify-between rounded-xl px-3.5 py-3">
+                    <div className="flex items-center gap-2.5">
+                      <span className="h-2 w-2 rounded-full bg-teal-400/80" />
+                      <span className="font-medium text-slate-300">Pay-Per-Scan Endpoint Ready</span>
+                    </div>
+                    <span className="font-mono text-[11px] text-teal-300">0.001 SOL / scan</span>
+                  </div>
+                )}
 
                 <div
                   className={`rounded-xl p-3.5 ${
@@ -1142,20 +1156,15 @@ export function X402ScannerTab({
                       ? "aegis-card-safe"
                       : paymentRequired
                       ? "border border-slate-700 bg-[#080d17]"
-                      : "aegis-subbox opacity-75"
+                      : "aegis-subbox"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-slate-100">STEP 2 · Settle + SPL Memo</span>
-                    <span className="text-[10.5px] font-medium tracking-wide text-slate-400">
-                      {step === "done" ? "200 OK · VERIFIED" : "PAYMENT-SIGNATURE"}
+                  <div className="mb-2.5 flex items-center justify-between">
+                    <span className="font-semibold text-slate-100">Execute Scan</span>
+                    <span className="rounded bg-slate-900 px-2 py-0.5 font-mono text-[10px] text-slate-400">
+                      {step === "done" ? "200 OK · VERIFIED" : "SPL MEMO ANTI-SNIPING"}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs text-slate-400">
-                    Sends 0.001 SOL + SPL Memo bound to{" "}
-                    <code className="font-mono text-[11px] text-slate-300">sha256(code)</code> on
-                    Devnet, verified atomically against TOCTOU replay & tx sniping.
-                  </p>
                   <button
                     onClick={handlePayAndScan}
                     disabled={
@@ -1164,20 +1173,20 @@ export function X402ScannerTab({
                       step === "verifying" ||
                       sponsorRunning
                     }
-                    className="aegis-btn-primary mt-3 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs font-bold disabled:opacity-40"
+                    className="aegis-btn-primary flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-xs font-bold disabled:opacity-40"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
                     {step === "paying" && !sponsorRunning
                       ? "Confirming 0.001 SOL + Memo..."
                       : step === "verifying"
-                      ? "Verifying Transfer & Memo on Devnet..."
+                      ? "Verifying on Devnet..."
                       : "2. Pay 0.001 SOL + Memo with Wallet"}
                   </button>
                   <button
                     type="button"
                     onClick={handleSponsoredJudgeDemo}
                     disabled={sponsorRunning || step === "verifying"}
-                    className="aegis-btn-secondary mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-[11.5px] font-medium disabled:opacity-40"
+                    className="aegis-btn-secondary mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[11.5px] font-medium disabled:opacity-40"
                   >
                     <Zap className="h-3.5 w-3.5 text-teal-300" />
                     {sponsorRunning
@@ -1187,9 +1196,12 @@ export function X402ScannerTab({
                 </div>
 
                 {paymentReceipt && (
-                  <div className="aegis-card-safe rounded-xl p-3.5">
+                  <div className="aegis-card-safe rounded-xl p-3">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-teal-300">STEP 3 · PAYMENT-RESPONSE</span>
+                      <span className="inline-flex items-center gap-1.5 font-semibold text-teal-300">
+                        <BadgeCheck className="h-3.5 w-3.5" />
+                        {oracleAttestation ? "Ed25519 Oracle Proof Issued" : "Payment Settled"}
+                      </span>
                       <a
                         href={paymentReceipt.explorerUrl}
                         target="_blank"
@@ -1199,15 +1211,9 @@ export function X402ScannerTab({
                         Explorer <ExternalLink className="h-3 w-3" />
                       </a>
                     </div>
-                    <div className="mt-1 truncate font-mono text-[10.5px] text-teal-100">
-                      Memo: {paymentReceipt.memoBound} · TX: {paymentReceipt.transaction}
+                    <div className="mt-1 truncate font-mono text-[10.5px] text-teal-100/90">
+                      {paymentReceipt.memoBound} · {paymentReceipt.transaction}
                     </div>
-                    {oracleAttestation && (
-                      <div className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-medium text-slate-200">
-                        <BadgeCheck className="h-3 w-3 text-teal-300" />
-                        Ed25519 Oracle Signature Issued (Ready to Seal On-Chain)
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -1252,30 +1258,25 @@ export function X402ScannerTab({
       {report && inputMode !== "onchain" && (
         <MachinedPanel variant="titanium" className="p-6">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-            <div className="flex items-center gap-4">
-              <div
-                className={`flex h-16 w-16 flex-col items-center justify-center rounded-2xl border font-mono ${
-                  report.securityScore >= 85
-                    ? "border-teal-400/50 bg-teal-500/10 text-teal-300"
-                    : report.securityScore >= 60
-                    ? "border-amber-400/50 bg-amber-500/10 text-amber-300"
-                    : "border-rose-500/50 bg-rose-500/10 text-rose-300"
-                }`}
-              >
-                <span className="text-xl font-black">{report.securityScore}</span>
-                <span className="text-[10px]">GRADE {report.riskGrade}</span>
-              </div>
-              <div>
-                <h3 className="font-display text-lg font-bold text-white">{report.targetName}</h3>
-                <div className="mt-0.5 flex flex-wrap items-center gap-3 font-mono text-xs text-slate-400">
-                  <span>{report.filesScanned.length} file(s)</span>
-                  <span>·</span>
-                  <span>Code: 0x{report.sourceCodeSha256.slice(0, 10)}...</span>
-                  <span>·</span>
-                  <span className="text-rose-300">{report.summary.critical} Crit</span>
-                  <span className="text-orange-300">{report.summary.high} High</span>
-                  <span className="text-amber-300">{report.summary.medium} Med</span>
+            <div className="flex min-w-[280px] flex-1 items-center gap-4">
+              <ScoreRingGauge
+                score={report.securityScore}
+                label={`GRADE ${report.riskGrade}`}
+                size={68}
+              />
+              <div className="min-w-0 flex-1 max-w-md space-y-2">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <h3 className="font-display text-lg font-bold text-white">{report.targetName}</h3>
+                  <span className="rounded border border-slate-800 bg-slate-900/80 px-2 py-0.5 font-mono text-[10.5px] text-slate-400">
+                    0x{report.sourceCodeSha256.slice(0, 10)}…
+                  </span>
                 </div>
+                <SeverityDistributionBar
+                  critical={report.summary.critical}
+                  high={report.summary.high}
+                  medium={report.summary.medium}
+                  low={report.summary.low}
+                />
               </div>
             </div>
 

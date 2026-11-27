@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
 import { MachinedPanel } from "@/components/MachinedPanel";
+import { EscrowCapacityBar, ProtocolStepper } from "@/components/VisualPrimitives";
 import type { EscalatedFindingDraft } from "@/app/page";
 import {
   AegisEncryptedEnvelope,
@@ -665,6 +666,26 @@ export function BountyVaultsTab({
         </div>
       )}
 
+      <ProtocolStepper
+        steps={[
+          {
+            title: "AES-256-GCM",
+            sub: e2eBundle ? "Payload Sealed" : "Browser Encrypt",
+            status: e2eBundle ? "done" : "active",
+          },
+          {
+            title: "SHA-256 Commit",
+            sub: "Zero-Knowledge Lock",
+            status: e2eBundle ? "active" : "idle",
+          },
+          {
+            title: "On-Chain Escrow",
+            sub: "24h Anti-Poach Guard",
+            status: "done",
+          },
+        ]}
+      />
+
       {/* Action Forms Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Form 1: Create Bounty Vault */}
@@ -675,14 +696,7 @@ export function BountyVaultsTab({
                 <div className="rounded-lg border border-slate-600/30 bg-slate-800/60 p-2 text-slate-200">
                   <Lock className="h-4 w-4" />
                 </div>
-                <div>
-                  <h3 className="font-display font-semibold text-white">
-                    1. Launch Trustless Bounty Vault
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Rent-safe Anchor PDA escrow with anti-rug-pull pending lock
-                  </p>
-                </div>
+                <h3 className="font-display font-semibold text-white">1. Launch Bounty Vault</h3>
               </div>
               <span className="rounded border border-slate-600/40 bg-slate-800/50 px-2 py-0.5 font-mono text-[10px] text-slate-300">
                 create_bounty
@@ -831,14 +845,9 @@ export function BountyVaultsTab({
                 <div className="rounded-lg border border-teal-400/25 bg-teal-400/10 p-2 text-teal-300">
                   <Hash className="h-4 w-4" />
                 </div>
-                <div>
-                  <h3 className="font-display font-semibold text-white">
-                    2. Encrypt & Seal Finding (AES-256-GCM + Commit)
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Client-side WebCrypto encryption + on-chain SHA-256 reveal verification
-                  </p>
-                </div>
+                <h3 className="font-display font-semibold text-white">
+                  2. Seal Vulnerability Commit
+                </h3>
               </div>
               <span className="rounded border border-teal-400/25 bg-teal-400/10 px-2 py-0.5 font-mono text-[10px] text-teal-300">
                 AES-GCM · SHA-256
@@ -849,7 +858,7 @@ export function BountyVaultsTab({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="mb-1 block text-xs font-medium text-slate-300">
-                    Active Target Bounty Vault
+                    Target Vault
                   </label>
                   <select
                     value={selectedBounty}
@@ -893,9 +902,10 @@ export function BountyVaultsTab({
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-slate-300">
-                  Confidential PoC Summary (max 160 chars · verified on-chain at reveal)
-                </label>
+                <div className="mb-1 flex items-center justify-between">
+                  <label className="text-xs font-medium text-slate-300">PoC Summary</label>
+                  <span className="text-[10px] text-slate-500">{pocSecret.length}/160</span>
+                </div>
                 <textarea
                   rows={2}
                   maxLength={160}
@@ -910,7 +920,7 @@ export function BountyVaultsTab({
 
               <div>
                 <label className="mb-1 block text-xs font-medium text-slate-300">
-                  Full Technical PoC / Exploit Payload (encrypted locally with AES-256-GCM)
+                  Exploit Payload (AES-256-GCM)
                 </label>
                 <textarea
                   rows={2}
@@ -1161,6 +1171,11 @@ export function BountyVaultsTab({
                       )}
                     </div>
                   </div>
+
+                  <EscrowCapacityBar
+                    remainingLamports={b.remainingPool}
+                    totalLamports={b.totalDeposited}
+                  />
 
                   {/* Findings inside this vault */}
                   {vaultFindings.length > 0 && (

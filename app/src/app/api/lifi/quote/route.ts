@@ -12,6 +12,7 @@ import {
 import { DEFAULT_TREASURY_ADDRESS } from "@/lib/x402/protocol";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const EVM_ADDR_RE = /^0x[a-fA-F0-9]{40}$/;
 

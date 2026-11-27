@@ -3,6 +3,7 @@ import { PublicKey } from "@solana/web3.js";
 import { InspectCluster, inspectSolanaProgramOnChain } from "@/lib/solana/programInspector";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 function parseCluster(raw?: string | null): InspectCluster {
   return raw === "mainnet-beta" || raw === "mainnet" ? "mainnet-beta" : "devnet";

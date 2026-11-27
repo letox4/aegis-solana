@@ -15,6 +15,7 @@ import {
 } from "@/lib/x402/protocol";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 const EXPOSE_HEADERS =
   "PAYMENT-REQUIRED, PAYMENT-RESPONSE, X-PAYMENT-REQUIRED, X-PAYMENT-RESPONSE";
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
         "2. Server returns HTTP 402 + PAYMENT-REQUIRED with payTo, 0.001 SOL, and anti-sniping memoRequired",
         "3. Client sends 0.001 SOL + SPL Memo(memoRequired) on Solana Devnet",
         "4. Client retries POST with Base64 PAYMENT-SIGNATURE header",
-        "5. Server verifies transfer & memo atomically on Devnet, runs 16 O(n) Sealevel detectors with visual patch diffs & Anchor TS exploit PoCs, and signs an Ed25519 oracle attestation",
+        "5. Server verifies transfer & memo atomically on Devnet, runs 20 Inter-Procedural Sealevel, Token-2022 & CPI detectors with visual patch diffs & Anchor TS exploit PoCs, and signs an Ed25519 oracle attestation",
       ],
       paymentRequired,
     },

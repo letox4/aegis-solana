@@ -4,6 +4,7 @@ import { AEGIS_PROGRAM_ID, fetchAllAegisOnChainState } from "@/lib/solana/aegisP
 import { DEFAULT_TREASURY_ADDRESS, SOLANA_RPC_URL } from "@/lib/x402/protocol";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function GET() {
   try {

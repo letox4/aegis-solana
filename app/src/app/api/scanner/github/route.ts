@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { fetchGithubSolanaRepo } from "@/lib/scanner/githubFetcher";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   let body: { repoUrl?: string } = {};

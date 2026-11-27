@@ -4,6 +4,7 @@ import { AEGIS_PROGRAM_ID, fetchAttestationsByTargetProgram } from "@/lib/solana
 import { SOLANA_RPC_URL } from "@/lib/x402/protocol";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 function escapeXml(str: string): string {
   return str

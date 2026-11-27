@@ -24,6 +24,7 @@ import {
 } from "@/lib/x402/protocol";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 // Lightweight per-IP rate limiter (max 5 sponsored Devnet scans / 10 min per IP)
 const ipUsage = new Map<string, { count: number; resetAt: number }>();

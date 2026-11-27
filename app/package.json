@@ -1,6 +1,6 @@
 {
-  "name": "aegis402-app",
-  "version": "1.0.0",
+  "name": "aegis-web",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

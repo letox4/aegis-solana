@@ -1,7 +1,7 @@
 {
-  "name": "aegis402-workspace",
-  "version": "1.0.0",
-  "description": "Aegis402 Solana Rust/Anchor Bug Bounty Vault + x402 Security Scanner + LI.FI Cross-Chain Router",
+  "name": "aegis-solana",
+  "version": "3.0.0",
+  "description": "AEGIS v3.0 — Zero-Trust Solana Bug Bounty Vaults, 3-Mode x402 Security Suite & LI.FI Cross-Chain Router",
   "private": true,
   "scripts": {
     "test:anchor": "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts",
